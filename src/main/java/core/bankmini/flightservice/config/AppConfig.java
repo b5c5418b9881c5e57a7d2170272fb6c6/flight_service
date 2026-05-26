@@ -5,7 +5,9 @@ import org.springframework.context.annotation.Import;
 
 @Configuration
 @Import({
-        SwaggerCustomConfig.class
+        SwaggerCustomConfig.class,
+        CorsConfig.class,
+        SecurityConfig.class
 })
 public class AppConfig {
 }

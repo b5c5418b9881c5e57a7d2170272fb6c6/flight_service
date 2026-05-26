@@ -6,9 +6,10 @@ build/
 !**/src/test/**/build/
 **/src/main/**/resources/
 **/src/test/**/resources/
-/src/main/resources/application-prod.yaml
+/src/main/resources/application.yaml
 docker-compose.yaml
-/docker
+/docker/**
+/docker/Dockerfile
 .gitignore
 
 ### STS ###
