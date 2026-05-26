@@ -1,0 +1,106 @@
+spring:
+  application:
+    name: FlightService
+
+  front:
+    url: http://localhost:3000
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+      # авто-миграции:
+      # update — изменяет схему (dev only)      # validate — проверяет (prod)      # none — ничего не делает
+    show-sql: false
+    # вывод SQL в консоль (лучше OFF, использовать logging)
+
+    properties:
+      hibernate:
+        generate_statistics: true
+        format_sql: true
+        # красиво форматирует SQL в логах
+        default_batch_fetch_size: 70
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        # диалект под конкретную БД (можно не указывать — автоопределяется)
+
+  profiles:
+    active: http
+
+  sql:
+    init:
+      mode: always
+      # выполнять schema.sql / data.sql при старте
+      # always — всегда      # embedded — только для in-memory БД      # never — отключено
+
+server:
+  port: 54322
+  # Приложение внутри контейнера слушает
+
+  address: 0.0.0.0
+  # слушать все сетевые интерфейсы (важно для Docker/сервера)
+
+  servlet:
+    context-path: "/api"
+    # базовый префикс → /api/users, /api/orders
+
+    multipart:
+      max-file-size: 10MB
+      # максимальный размер одного файла
+
+      max-request-size: 10MB
+      # максимальный размер всего запроса (если несколько файлов)
+    session:
+      timeout: 5m
+
+  shutdown: graceful
+  # корректное завершение (ждёт завершения активных запросов)
+
+  tomcat:
+    threads:
+      max: 200
+      # максимум потоков → сколько запросов одновременно обрабатывается
+
+      min-spare: 10
+      # минимальное количество "готовых" потоков
+
+    max-connections: 10000
+    # максимум TCP соединений (включая idle)
+
+    accept-count: 100
+    # очередь запросов, если все потоки заняты
+
+    connection-timeout: 5s
+    # сколько ждать, пока клиент отправит запрос
+
+    keep-alive-timeout: 20s
+    # сколько держать соединение открытым (HTTP Keep-Alive)
+
+    max-keep-alive-requests: 100
+    # сколько запросов можно отправить через одно соединение
+
+    max-http-form-post-size: 2MB
+    # лимит размера form-data (защита от больших payload)
+
+    accesslog:
+      enabled: true
+      # включить access-логи (как в nginx)
+
+      pattern: "%h %l %u %t \"%r\" %s %b %D"
+      # формат логов:
+      # %h — IP      # %r — запрос      # %s — статус      # %D — время обработки
+      directory: logs
+      # папка для логов
+
+logging:
+  level:
+    org.springframework.security: debug
+    org.hibernate.SQL: debug
+    # лог SQL-запросов
+
+    org.hibernate.type.descriptor.sql.BasicBinder: trace
+    # лог параметров запросов (значения ?)
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs

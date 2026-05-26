@@ -1,0 +1,11 @@
+package core.bankmini.flightservice.config;
+
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+
+@Configuration
+@Import({
+        SwaggerCustomConfig.class
+})
+public class AppConfig {
+}
