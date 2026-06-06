@@ -3,6 +3,8 @@ package core.bankmini.flightservice.model.entity;
 import core.bankmini.flightservice.model.enums.FlightStatus;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -10,6 +12,7 @@ import java.util.UUID;
 @Table(name = "flights")
 @Entity
 @Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -20,6 +23,7 @@ public class Flight {
     private UUID id;
 
     //Номер рейса (KC123)
+    @Column(nullable = false, unique = true)
     private String flightNumber;
 
     //Какая авиакомпания выполняет
@@ -43,29 +47,36 @@ public class Flight {
     private Airport arrivalAirport;
 
     //Время вылета
+    @Column(nullable = false)
     private LocalDateTime departureAt;
 
     //Время прилета
+    @Column(nullable = false)
     private LocalDateTime arrivalAt;
 
     //Время полета - (arrivalAt - departureAt)
     private Integer durationMinutes;
 
     //Всего мест
+    @Column(nullable = false)
     private Integer seatsTotal;
 
     //Терминал
+    @Column(nullable = false)
     private String terminal;
 
     //Gate
+    @Column(unique = true,  nullable = false)
     private String gate;
 
     //Status
     @Enumerated(EnumType.STRING)
     private FlightStatus status;
 
+    @CreationTimestamp
     private LocalDateTime createdAt;
 
+    @UpdateTimestamp
     private LocalDateTime updatedAt;
 
 }

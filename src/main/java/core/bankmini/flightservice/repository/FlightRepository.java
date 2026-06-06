@@ -1,19 +1,104 @@
 package core.bankmini.flightservice.repository;
 
 import core.bankmini.flightservice.model.entity.Flight;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 public interface FlightRepository extends JpaRepository<Flight, UUID> {
 
-//    @Query("""
-//    select new core.bankmini.flightservice.model.entity.Flight (
-//    f.id, f.flightNumber, f.airline, f.aircraft, f.departureAirportCode,
-//    f.
-//    )
-//    from Flight f
-//    join
-//""")
-//    List<Flight> findAllByDepartureAndArrivalAndDepartureDate(String from, String to, LocalDate date);
+    @EntityGraph(attributePaths = {
+            "departureAirport",
+            "arrivalAirport"
+    })
+    @Query("""
+                select f
+                from Flight f
+                where f.departureAirport.iataCode = :fromAirport
+                and f.arrivalAirport.iataCode = :toAirport
+                and f.departureAt >= :start
+                and f.departureAt < :end
+            """)
+    List<Flight> searchAllFlightsWithDeparture(
+            @Param("fromAirport") String fromAirport,
+            @Param("toAirport") String toAirport,
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end
+    );
+
+    @EntityGraph(attributePaths = {
+            "departureAirport",
+            "arrivalAirport"
+    })
+    @Query("""
+                select f
+                from Flight f
+                where f.departureAirport.iataCode = :fromAirport
+                and f.arrivalAirport.iataCode = :toAirport
+                and f.arrivalAt >= :start
+                and f.arrivalAt < :end
+            """)
+    List<Flight> searchAllFlightsWithArrival(
+            @Param("fromAirport") String fromAirport,
+            @Param("toAirport") String toAirport,
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end
+    );
+
+    @EntityGraph(attributePaths = {
+            "departureAirport",
+            "arrivalAirport"
+    })
+    @Query("""
+                select f
+                from Flight f
+                where f.departureAirport.iataCode = :fromAirport
+                and f.arrivalAirport.iataCode = :toAirport
+            """)
+    List<Flight> searchAllFlightsWithoutDate(
+            @Param("fromAirport") String fromAirport,
+            @Param("toAirport") String toAirport
+    );
+
+    @EntityGraph(attributePaths = {
+            "departureAirport",
+            "arrivalAirport"
+    })
+    @Query("""
+                select f
+                from Flight f
+                where f.departureAirport.iataCode = :fromAirport
+                and f.arrivalAirport.iataCode = :toAirport
+                and f.departureAt >= :startDeparture
+                and f.departureAt < :endDeparture
+                and f.arrivalAt >= :startArrival
+                and f.arrivalAt < :endArrival
+            """)
+    List<Flight> searchAllFlightsWithDate(
+            @Param("fromAirport") String fromAirport,
+            @Param("toAirport") String toAirport,
+            @Param("startDeparture") LocalDateTime startDeparture,
+            @Param("endDeparture") LocalDateTime endDeparture,
+            @Param("startArrival") LocalDateTime startArrival,
+            @Param("endArrival") LocalDateTime endArrival
+    );
+
+    @EntityGraph(attributePaths = {
+            "departureAirport",
+            "arrivalAirport"
+    })
+    @Query("""
+                select f
+                from Flight f
+                join fetch f.aircraft
+                join fetch f.airline
+                where f.flightNumber = :flightNumber
+            """)
+    Flight findByFlightNumber(String flightNumber);
+
 }

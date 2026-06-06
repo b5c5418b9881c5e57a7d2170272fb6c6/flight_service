@@ -1,5 +1,9 @@
 package core.bankmini.flightservice.model.enums;
 
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 /// забронирован
 ///
 /// посадка на рейс
@@ -14,7 +18,16 @@ public enum FlightStatus {
     CREATED,
     SCHEDULED,
     BOARDING,
-    DELAYED,
+    DELAYED, // Задержан
     CANCELLED,
-    COMPLETED
+    COMPLETED;
+
+    private final static Set<String> NAMES =
+            Arrays.stream(values())
+                    .map(Enum::name)
+                    .collect(Collectors.toUnmodifiableSet());
+
+    public static boolean contains(String name) {
+        return NAMES.contains(name);
+    }
 }
