@@ -1,17 +1,18 @@
 package core.bankmini.flightservice.model.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.UUID;
 
 @Table(name = "airlines")
 @Entity
 @Builder
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Airline {
@@ -20,14 +21,18 @@ public class Airline {
     @Id
     private UUID id;
 
+    @Column(unique = true, nullable = false)
     private String name;
 
     //	Код IATA (ALA)
+    @Column(unique = true, nullable = false)
     private String iataCode;
 
     //ICAO код
+    @Column(unique = true)
     private String icaoCode;
 
+    @Column(nullable = false)
     private String country;
 
 }
