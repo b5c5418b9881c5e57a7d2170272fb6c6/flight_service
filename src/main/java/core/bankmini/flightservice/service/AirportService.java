@@ -1,17 +1,14 @@
 package core.bankmini.flightservice.service;
 
 import core.bankmini.flightservice.exceptions.AirportAlreadyExistsException;
-import core.bankmini.flightservice.exceptions.CodeAlreadyExistException;
 import core.bankmini.flightservice.model.dto.airport.AirportRequestDto;
 import core.bankmini.flightservice.model.dto.airport.AirportResponseDto;
 import core.bankmini.flightservice.model.entity.Airport;
 import core.bankmini.flightservice.repository.AirportRepository;
 import core.bankmini.flightservice.utility.AirportMapper;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
