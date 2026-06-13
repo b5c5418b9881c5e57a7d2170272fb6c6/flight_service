@@ -12,8 +12,6 @@ import org.springframework.stereotype.Component;
 
 import java.time.*;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Component
 public class FlightMapper {

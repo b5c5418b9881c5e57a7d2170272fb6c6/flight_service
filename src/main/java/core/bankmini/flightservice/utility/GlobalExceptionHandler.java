@@ -1,5 +1,7 @@
 package core.bankmini.flightservice.utility;
 
+import core.bankmini.flightservice.exceptions.AirportAlreadyExistsException;
+import core.bankmini.flightservice.exceptions.FlightAlreadyExistException;
 import core.bankmini.flightservice.model.dto.ValidationErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -16,9 +18,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @RestControllerAdvice
@@ -40,9 +42,7 @@ public class GlobalExceptionHandler {
     }
 
     // 400 (ручные ошибки)
-    @ExceptionHandler({
-            IllegalArgumentException.class,
-            NoSuchElementException.class})
+    @ExceptionHandler(NoSuchElementException.class)
     public ProblemDetail handleBadRequest(IllegalArgumentException ex, HttpServletRequest request) {
         return buildProblem(HttpStatus.BAD_REQUEST, "Bad request", ex.getMessage(), request);
     }
@@ -63,7 +63,8 @@ public class GlobalExceptionHandler {
     //400 ошибка валидации
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> handleBusinessExByNullOrBlankFields(MethodArgumentNotValidException ex, HttpServletRequest request) {
-        Map<String, String> errors = new HashMap<>();
+        Map<String, String> errors = new ConcurrentHashMap<>() {
+        };
 
         ex.getBindingResult().getFieldErrors()
                 .forEach(err -> {
@@ -89,10 +90,28 @@ public class GlobalExceptionHandler {
         return buildProblem(HttpStatus.NOT_FOUND, "Endpoint not found", ex.getMessage(), request);
     }
 
+    // 404 (не найден предмет)
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ProblemDetail handleNoArgument(IllegalArgumentException ex, HttpServletRequest request) {
+        return buildProblem(HttpStatus.NOT_FOUND, "Not found", ex.getMessage(), request);
+    }
+
     // 405 (не тот HTTP метод)
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ProblemDetail handleMethod(HttpRequestMethodNotSupportedException ex, HttpServletRequest request) {
         return buildProblem(HttpStatus.METHOD_NOT_ALLOWED, "Method not allowed", ex.getMessage(), request);
+    }
+
+    // 409 (Airport уже существует)
+    @ExceptionHandler(AirportAlreadyExistsException.class)
+    public ProblemDetail handleMethodAirportAlreadyExists(AirportAlreadyExistsException ex, HttpServletRequest request) {
+        return buildProblem(HttpStatus.CONFLICT, "Airport already exists", ex.getMessage(), request);
+    }
+
+    // 409 (Flight уже существует)
+    @ExceptionHandler(FlightAlreadyExistException.class)
+    public ProblemDetail handleMethodFlightAlreadyExists(FlightAlreadyExistException ex, HttpServletRequest request) {
+        return buildProblem(HttpStatus.CONFLICT, "Flight already exists", ex.getMessage(), request);
     }
 
     // 500 (БД / JPA)
@@ -101,11 +120,14 @@ public class GlobalExceptionHandler {
         return buildProblem(HttpStatus.CONFLICT, "Database conflict", ex.getMostSpecificCause().getMessage(), request);
     }
 
-    // 🔸 fallback
-    @ExceptionHandler(Exception.class)
+    //  fallback
+    @ExceptionHandler({
+            Exception.class,
+            NullPointerException.class,
+    })
     public ProblemDetail handleOther(Exception ex, HttpServletRequest request) {
 
-        log.error("Unhandled exception", ex); // 🔥 обязательно лог
+        log.error("Unhandled exception", ex); // обязательно лог
 
         return buildProblem(
                 HttpStatus.INTERNAL_SERVER_ERROR,

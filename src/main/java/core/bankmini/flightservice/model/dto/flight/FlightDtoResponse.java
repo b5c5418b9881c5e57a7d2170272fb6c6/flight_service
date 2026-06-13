@@ -1,12 +1,11 @@
 package core.bankmini.flightservice.model.dto.flight;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 
 import java.util.UUID;
 
+@Builder
 public record FlightDtoResponse(
-        @NotNull(message = "Fight id is required")
         UUID id
 ) {
 }

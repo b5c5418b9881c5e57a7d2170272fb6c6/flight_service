@@ -6,6 +6,7 @@ import core.bankmini.flightservice.model.entity.Airline;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Component
@@ -25,8 +26,8 @@ public class AirlineMapper {
         return Airline.builder()
                 .id(id)
                 .name(dto.name())
-                .iataCode(dto.iataCode())
-                .icaoCode(dto.icaoCode())
+                .iataCode(Objects.requireNonNull(dto.iataCode()).toUpperCase())
+                .icaoCode(Objects.requireNonNull(dto.icaoCode()).toUpperCase())
                 .country(dto.country())
                 .build();
     }
@@ -41,8 +42,8 @@ public class AirlineMapper {
         return AirlineResponseDto.builder()
                 .id(airlines.getId())
                 .name(airlines.getName())
-                .iataCode(airlines.getIataCode())
-                .icaoCode(airlines.getIcaoCode())
+                .iataCode(airlines.getIataCode().toUpperCase())
+                .icaoCode(airlines.getIcaoCode().toUpperCase())
                 .country(airlines.getCountry())
                 .build();
     }

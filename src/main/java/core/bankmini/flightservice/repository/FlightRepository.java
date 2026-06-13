@@ -1,13 +1,16 @@
 package core.bankmini.flightservice.repository;
 
 import core.bankmini.flightservice.model.entity.Flight;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface FlightRepository extends JpaRepository<Flight, UUID> {
@@ -28,7 +31,8 @@ public interface FlightRepository extends JpaRepository<Flight, UUID> {
             @Param("fromAirport") String fromAirport,
             @Param("toAirport") String toAirport,
             @Param("start") LocalDateTime start,
-            @Param("end") LocalDateTime end
+            @Param("end") LocalDateTime end,
+            Pageable pageable
     );
 
     @EntityGraph(attributePaths = {
@@ -47,7 +51,8 @@ public interface FlightRepository extends JpaRepository<Flight, UUID> {
             @Param("fromAirport") String fromAirport,
             @Param("toAirport") String toAirport,
             @Param("start") LocalDateTime start,
-            @Param("end") LocalDateTime end
+            @Param("end") LocalDateTime end,
+            Pageable pageable
     );
 
     @EntityGraph(attributePaths = {
@@ -62,7 +67,8 @@ public interface FlightRepository extends JpaRepository<Flight, UUID> {
             """)
     List<Flight> searchAllFlightsWithoutDate(
             @Param("fromAirport") String fromAirport,
-            @Param("toAirport") String toAirport
+            @Param("toAirport") String toAirport,
+            Pageable pageable
     );
 
     @EntityGraph(attributePaths = {
@@ -85,7 +91,8 @@ public interface FlightRepository extends JpaRepository<Flight, UUID> {
             @Param("startDeparture") LocalDateTime startDeparture,
             @Param("endDeparture") LocalDateTime endDeparture,
             @Param("startArrival") LocalDateTime startArrival,
-            @Param("endArrival") LocalDateTime endArrival
+            @Param("endArrival") LocalDateTime endArrival,
+            Pageable pageable
     );
 
     @EntityGraph(attributePaths = {
@@ -101,4 +108,14 @@ public interface FlightRepository extends JpaRepository<Flight, UUID> {
             """)
     Flight findByFlightNumber(String flightNumber);
 
+    @Modifying
+    @Query("""
+                update Flight f
+                set f.status = 'CANCELLED'
+                where f.status = 'CREATED'
+                  and f.departureAt < :now
+            """)
+    int cancelExpiredFlights(@Param("now") LocalDateTime now);
+
+    Optional<Flight> existsByFlightNumberIs(String flightNumber);
 }

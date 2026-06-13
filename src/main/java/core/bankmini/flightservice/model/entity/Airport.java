@@ -1,6 +1,7 @@
 package core.bankmini.flightservice.model.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -16,9 +17,11 @@ import java.util.UUID;
         }
 )
 @Entity
+@Builder
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Airport {
 
     //Уникальный ID аэропорта
@@ -30,15 +33,23 @@ public class Airport {
     private String iataCode;
 
     //ICAO код
-    @Column(unique = true, nullable = false, length = 4)
+    @Column(unique = true, length = 4)
     private String icaoCode;
 
+    @Column(unique = true, nullable = false)
     private String name;
 
+    @Column(nullable = false)
     private String city;
 
+    @Column(nullable = false)
     private String country;
 
+    @Pattern(
+            regexp = "^[a-zA-z]+/[A-Za-z]+?$",
+            message = "Неверный формат временной зоны. Используйте формат 'Регион/Город'"
+    )
+    @Column(nullable = false)
     private String timezone;
 
     //	Координата
@@ -50,8 +61,10 @@ public class Airport {
     private BigDecimal longitude;
 
     //Мин. время пересадки
+    @Column(nullable = false)
     private Integer minLayoverMinutes;
 
+    @Column(nullable = false)
     private Boolean internationalAirport;
 
 }

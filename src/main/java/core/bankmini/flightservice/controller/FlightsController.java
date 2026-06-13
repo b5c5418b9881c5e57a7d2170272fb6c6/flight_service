@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
-
 @Slf4j
 @RestController
 @RequestMapping("/flights")
@@ -23,49 +22,48 @@ public class FlightsController {
 
     private final FlightService flightService;
 
-    @PostMapping("/create")
-    @Tag(name = "Create flights")
-    public ResponseEntity<FlightDtoResponse> createFlight(@RequestBody CreateFlightDtoRequest dtoRequest) {
+    @PostMapping(name = "Create flight")
+    public ResponseEntity<FlightDtoResponse> createFlight(@Valid @RequestBody CreateFlightDtoRequest dtoRequest) {
+        log.info("Create flight request {}", dtoRequest);
         UUID flightId = flightService.createFlight(dtoRequest);
-        return ResponseEntity.ok().body(new FlightDtoResponse(flightId));
+        return ResponseEntity.status(HttpStatus.CREATED).body(FlightDtoResponse.builder().id(flightId).build());
     }
 
-    @GetMapping("/{id}")
-    @Tag(name = "Поиск по Id рейса", description = "Получить инфо по рейсу")
-    public ResponseEntity<FlightSearchDto> getFlightById(@Valid @PathVariable UUID id) {
+    @GetMapping(value = "/{id}", name = "Get flight by id")
+    public ResponseEntity<FlightSearchDto> getFlightById(@PathVariable UUID id) {
         return ResponseEntity.ok().body(flightService.getFlightById(id));
     }
 
-    @PatchMapping("/status")
-    @Tag(name = "Изменение статуса рейса")
-    public ResponseEntity<Void> changeFlightStatus(@RequestBody FlightChangeStatusDto dto) {
+    @PatchMapping(value = "/status", name = "Change flight status")
+    public ResponseEntity<Void> changeFlightStatus(@Valid @RequestBody FlightChangeStatusDto dto) {
         flightService.changeFlightStatus(dto.id(), dto.status());
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    @GetMapping("/status/{id}/canceled")
-    @Tag(name = "Cancel flight status")
-    public ResponseEntity<Void> cancelFlight(@Valid @PathVariable UUID id) {
+    @GetMapping(value = "/status/{id}/canceled", name = "Cancel status flight")
+    public ResponseEntity<Void> cancelFlight(@PathVariable UUID id) {
         flightService.cancelFlight(id);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    @GetMapping("/search")
-    @Tag(name = "Search flights", description = "Search all flights by filters")
-    public ResponseEntity<List<FlightSearchDto>> searchFlights(@RequestBody SearchFlightRequest request) {
+    @GetMapping(value = "/search", name = "Search flights by parameters")
+    public ResponseEntity<List<FlightSearchDto>> searchFlights(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @Valid @RequestBody SearchFlightRequest request) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(
                         flightService.searchAllFlights(
                                 request.from(),
                                 request.to(),
                                 request.departureDate(),
-                                request.arrivalDate()
+                                request.arrivalDate(),
+                                page, size
                         )
                 );
     }
 
-    @GetMapping("/number")
-    @Tag(name = "Find by Flight number", description = "Example: Номер рейса KC123")
+    @GetMapping(value = "/number", name = "Get flight by number")
     public ResponseEntity<FlightSearchDto> getFlightByNumber(@Valid @RequestParam String number) {
         return ResponseEntity.ok().body(flightService.getFlightByNumber(number));
     }

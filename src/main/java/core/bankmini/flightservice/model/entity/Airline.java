@@ -25,11 +25,11 @@ public class Airline {
     private String name;
 
     //	Код IATA (ALA)
-    @Column(unique = true, nullable = false)
+    @Column(unique = true, nullable = false, length = 3)
     private String iataCode;
 
     //ICAO код
-    @Column(unique = true)
+    @Column(unique = true, length = 4)
     private String icaoCode;
 
     @Column(nullable = false)

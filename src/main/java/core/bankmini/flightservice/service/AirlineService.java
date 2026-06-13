@@ -1,6 +1,7 @@
 package core.bankmini.flightservice.service;
 
 import core.bankmini.flightservice.exceptions.AirlineNotFoundException;
+import core.bankmini.flightservice.exceptions.CodeAlreadyExistException;
 import core.bankmini.flightservice.model.dto.airline.AirlineRequestDto;
 import core.bankmini.flightservice.model.dto.airline.AirlineResponseDto;
 import core.bankmini.flightservice.model.entity.Airline;
@@ -18,18 +19,34 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class AirlineService {
-    // create get all airlines -> list airlines with UUID for front & constructor flights
 
     private final AirlineRepository airlineRepository;
     private final AirlineMapper airlineMapper;
 
     @Transactional
     public UUID createAirline(AirlineRequestDto dto) {
+
+        try {
+            String iataCode = airlineRepository.findByIataCode(dto.iataCode()).getIataCode();
+            String icaoCode = airlineRepository.findByIcaoCode(dto.icaoCode()).getIcaoCode();
+
+            if (!dto.iataCode().equals(iataCode)) {
+                throw new CodeAlreadyExistException(iataCode, iataCode.getClass().getName());
+            }
+            if (!dto.icaoCode().equals(icaoCode)) {
+                throw new CodeAlreadyExistException(icaoCode, icaoCode.getClass().getName());
+            }
+        } catch (NullPointerException npe) {
+            throw new NullPointerException(npe.getMessage());
+        }
+
         UUID id = UUID.randomUUID();
 
         Airline airline = airlineRepository.save(
                 airlineMapper.mapAirlineRequestDtoToEntity(dto, id)
         );
+
+        log.info("AirlineService: Airline with id {} created", airline.getId());
 
         return airline.getId();
     }
@@ -37,11 +54,16 @@ public class AirlineService {
     public AirlineResponseDto getAirlineById(UUID id) {
         var airline = airlineRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Airline with id " + id + " not found"));
+        log.info("AirlineService: Airline with id {} found", id);
         return airlineMapper.airlineToAirlineResponseDto(airline);
     }
 
     public List<AirlineResponseDto> getAllAirlines() {
+
         var airlines = airlineRepository.findAll();
+
+        log.info("AirlineService: Get all Airlines");
+
         return airlineMapper.mapAirlineEntityToListDto(airlines);
     }
 
@@ -54,6 +76,8 @@ public class AirlineService {
         airline.setIataCode(dto.iataCode());
         airline.setIcaoCode(dto.icaoCode());
         airline.setCountry(dto.country());
+
+        log.info("AirlineService: Airline with id {} updated", id);
 
         return airlineMapper.airlineToAirlineResponseDto(airline);
     }

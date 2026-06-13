@@ -1,5 +1,6 @@
 package core.bankmini.flightservice.model.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -12,12 +13,14 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Aircraft {
 
     //Уникальный ID самолета
     @Id
     private UUID id;
 
+    @Column(unique = true,  nullable = false)
     private String model;
 
     //Производитель
@@ -29,6 +32,7 @@ public class Aircraft {
 
     private Integer seatsFirst;
 
+    @Column(nullable = false)
     private Integer seatsTotal;
 
 }
