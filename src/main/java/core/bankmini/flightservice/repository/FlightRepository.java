@@ -7,10 +7,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 public interface FlightRepository extends JpaRepository<Flight, UUID> {
@@ -109,6 +109,7 @@ public interface FlightRepository extends JpaRepository<Flight, UUID> {
     Flight findByFlightNumber(String flightNumber);
 
     @Modifying
+    @Transactional
     @Query("""
                 update Flight f
                 set f.status = 'CANCELLED'
@@ -117,5 +118,5 @@ public interface FlightRepository extends JpaRepository<Flight, UUID> {
             """)
     int cancelExpiredFlights(@Param("now") LocalDateTime now);
 
-    Optional<Flight> existsByFlightNumberIs(String flightNumber);
+    Boolean existsByFlightNumberIs(String flightNumber);
 }

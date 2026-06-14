@@ -47,10 +47,9 @@ public class FlightService {
     @Transactional
     public UUID createFlight(CreateFlightDtoRequest dtoRequest) {
 
-        Flight existFlight = flightRepository.existsByFlightNumberIs(dtoRequest.flightNumber())
-                .orElseThrow(() -> new FlightAlreadyExistException("Flight with this number %s already exist".formatted(dtoRequest.flightNumber())));
+        Boolean existFlight = flightRepository.existsByFlightNumberIs(dtoRequest.flightNumber());
 
-        if (existFlight == null) {
+        if (existFlight == false) {
             throw new IllegalArgumentException("Flight with this number %s does not exist".formatted(dtoRequest.flightNumber()));
         }
 
