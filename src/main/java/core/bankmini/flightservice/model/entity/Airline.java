@@ -8,14 +8,13 @@ import lombok.*;
 
 import java.util.UUID;
 
-@Table(name = "airlines")
-@Entity
+@Data
+@EqualsAndHashCode(of = "id")
 @Builder
-@Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Airline {
+@Table(name = "airlines")
+@Entity public class Airline {
 
     //Уникальный ID авиакомпании - авиалиния
     @Id

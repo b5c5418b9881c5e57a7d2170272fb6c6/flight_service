@@ -7,6 +7,11 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.util.UUID;
 
+@Data
+@EqualsAndHashCode(of = "id")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(
         name = "airports",
         indexes = {
@@ -17,11 +22,6 @@ import java.util.UUID;
         }
 )
 @Entity
-@Builder
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 public class Airport {
 
     //Уникальный ID аэропорта

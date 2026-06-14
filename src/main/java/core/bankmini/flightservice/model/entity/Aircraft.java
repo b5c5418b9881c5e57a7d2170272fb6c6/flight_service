@@ -8,19 +8,19 @@ import lombok.*;
 
 import java.util.UUID;
 
-@Table(name = "aircrafts")
-@Entity
-@Getter
-@Setter
+@Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "aircrafts")
+@Entity
 public class Aircraft {
 
     //Уникальный ID самолета
     @Id
     private UUID id;
 
-    @Column(unique = true,  nullable = false)
+    @Column(unique = true, nullable = false)
     private String model;
 
     //Производитель

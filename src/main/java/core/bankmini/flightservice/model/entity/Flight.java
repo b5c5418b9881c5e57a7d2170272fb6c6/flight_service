@@ -9,13 +9,18 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Table(name = "flights")
-@Entity
-@Getter
-@Setter
+@Data
+@ToString(exclude = {
+        "airline",
+        "aircraft",
+        "departureAirport",
+        "arrivalAirport"
+})
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "flights")
+@Entity
 public class Flight {
 
     //Уникальный ID рейса
