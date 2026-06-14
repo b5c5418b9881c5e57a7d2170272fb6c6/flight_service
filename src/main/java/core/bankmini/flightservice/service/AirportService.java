@@ -32,13 +32,12 @@ public class AirportService {
             throw new AirportAlreadyExistsException(airportAlreadySaved.getName());
         }
 
-        Airport airport = airportMapper.mapEntityToDto(dto, UUID.randomUUID());
+        Airport airport = airportMapper.mapDtoToEntity(dto, UUID.randomUUID());
         UUID airportId = airportRepository.save(airport).getId();
         log.info("AirportService: Created airport with id {}", airport.getId());
 
         return airportId;
     }
-
 
     public List<AirportResponseDto> getAllAirports() {
         var airports = airportRepository.findAll();

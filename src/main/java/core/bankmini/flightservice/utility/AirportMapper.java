@@ -26,7 +26,7 @@ public class AirportMapper {
                 .build();
     }
 
-    public Airport mapEntityToDto(AirportRequestDto dto, UUID id) {
+    public Airport mapDtoToEntity(AirportRequestDto dto, UUID id) {
         return Airport.builder()
                 .id(id)
                 .iataCode(Objects.requireNonNull(dto.iataCode().toUpperCase()))
