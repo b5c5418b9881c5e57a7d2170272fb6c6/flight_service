@@ -1,7 +1,6 @@
 package core.bankmini.flightservice.util;
 
 import core.bankmini.flightservice.model.dto.airport.AirportRequestDto;
-import core.bankmini.flightservice.model.entity.Airline;
 import core.bankmini.flightservice.model.entity.Airport;
 
 import java.math.BigDecimal;

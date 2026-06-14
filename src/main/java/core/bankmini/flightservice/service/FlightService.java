@@ -3,7 +3,6 @@ package core.bankmini.flightservice.service;
 import core.bankmini.flightservice.exceptions.AircraftNotFoundException;
 import core.bankmini.flightservice.exceptions.AirlineNotFoundException;
 import core.bankmini.flightservice.exceptions.AirportNotFoundException;
-import core.bankmini.flightservice.exceptions.FlightAlreadyExistException;
 import core.bankmini.flightservice.model.dto.flight.CreateFlightDtoRequest;
 import core.bankmini.flightservice.model.dto.flight.FlightSearchDto;
 import core.bankmini.flightservice.model.entity.Aircraft;
@@ -40,8 +39,6 @@ public class FlightService {
     private final AirlineRepository airlineRepository;
     private final AircraftRepository aircraftRepository;
     private final AirportRepository airportRepository;
-
-    private Executor executor;
     private final FlightMapper mapper;
 
     @Transactional
