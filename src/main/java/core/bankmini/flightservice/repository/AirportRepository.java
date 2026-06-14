@@ -1,13 +1,11 @@
 package core.bankmini.flightservice.repository;
 
 import core.bankmini.flightservice.model.entity.Airport;
-import core.bankmini.flightservice.model.entity.Flight;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 public interface AirportRepository extends JpaRepository<Airport, UUID> {
