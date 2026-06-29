@@ -71,7 +71,7 @@ public class Flight {
     private String terminal;
 
     //Gate
-    @Column(unique = true,  nullable = false)
+    @Column(nullable = false)
     private String gate;
 
     //Status
