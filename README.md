@@ -62,19 +62,76 @@ Component Breakdown
 ___
 
 ```
-                             ┌─────────────────┐  
-                             │    Frontend     │
-                             └────────┬────────┘
-                                      │
-                                API Gateway
-                                      │
-              ┌──────────────────┐────┴───────────┐───────────────────┐
-              │                  │                │                   │
-         Route Engine       Search API/BFF   Booking Service    Payment Service
-              │                                                                            
-      ┌───────┴────────┐
-      │                │
-Flight Service   Pricing Service
+                          Frontend
+                              │
+                           HTTPS
+                              │
+                              ▼
+                        API Gateway
+                              │
+        ┌─────────────────────┼─────────────────────┐
+        │                     │                     │
+        ▼                     ▼                     ▼
+
+ Search Service      Booking Service        User Service
+        │                     │
+        │                     ├──── REST ───► User Service
+        │                     ├──── REST ───► Flight Service
+        │                     ├──── REST ───► Pricing Service
+        │                     └──── REST ───► Payment Service
+        │
+        ├──── REST ───► Route Engine
+        │
+        └──── REST ───► Pricing Service
+
+──────────────────────────────────────────────────────────
+
+                    EVENT FLOW
+
+                 Flight Service
+                        │
+                        │ Publish
+                        ▼
+
+                FlightCreated
+                FlightUpdated
+                FlightCancelled
+
+                        │
+                        ▼
+
+                      Kafka
+                        │
+                        ▼
+
+                  Route Engine
+                     Consumer
+
+                        │
+                        ▼
+
+                    route_db
+
+──────────────────────────────────────────────────────────
+
+                       CACHE
+
+                    Search Service
+                           │
+                           ▼
+
+                         Redis
+
+──────────────────────────────────────────────────────────
+
+                     DATABASES
+
+ flight_db
+ booking_db
+ user_db
+ pricing_db
+ payment_db
+ route_db
 
 ```
 
