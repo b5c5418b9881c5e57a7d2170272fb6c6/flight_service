@@ -16,7 +16,6 @@ import java.util.UUID;
 @Table(name = "airlines")
 @Entity public class Airline {
 
-    //Уникальный ID авиакомпании - авиалиния
     @Id
     private UUID id;
 

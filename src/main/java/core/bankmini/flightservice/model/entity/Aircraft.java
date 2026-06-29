@@ -16,7 +16,6 @@ import java.util.UUID;
 @Entity
 public class Aircraft {
 
-    //Уникальный ID самолета
     @Id
     private UUID id;
 
