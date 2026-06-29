@@ -7,36 +7,21 @@ import core.bankmini.flightservice.model.entity.Flight;
 import core.bankmini.flightservice.model.enums.FlightStatus;
 
 import java.time.LocalDateTime;
-import java.util.Random;
 import java.util.UUID;
 
 public class FlightDataUtil {
 
     public static Flight getFlightPersisted(
-            Airline airline, Aircraft aircraft,
-            Airport departure, Airport arrival,
+            Airline airline,
+            Aircraft aircraft,
+            Airport departure,
+            Airport arrival,
             String flightNumber
     ) {
-        return Flight.builder()
-                .id(UUID.randomUUID())
-                .flightNumber(flightNumber)
-                .airline(airline)
-                .aircraft(aircraft)
-                .departureAirport(departure)
-                .arrivalAirport(arrival)
-                .departureAt(LocalDateTime.now().plusDays(1))
-                .arrivalAt(LocalDateTime.now())
-                .seatsTotal(new Random().nextInt(1000))
-                .terminal("M" + new Random().nextInt(220))
-                .gate("A" + new Random().nextInt(1000))
-                .build();
-    }
+        LocalDateTime base = LocalDateTime.now();
+        LocalDateTime departureAt = base.plusDays(1);
+        LocalDateTime arrivalAt = departureAt.plusHours(2);
 
-    public static Flight getFlightPersisted(
-            Airline airline, Aircraft aircraft,
-            Airport departure, Airport arrival,
-            String flightNumber, LocalDateTime departureAt
-    ) {
         return Flight.builder()
                 .id(UUID.randomUUID())
                 .flightNumber(flightNumber)
@@ -45,14 +30,39 @@ public class FlightDataUtil {
                 .departureAirport(departure)
                 .arrivalAirport(arrival)
                 .departureAt(departureAt)
-                .arrivalAt(LocalDateTime.now())
-                .seatsTotal(new Random().nextInt(1000))
-                .terminal("M" + new Random().nextInt(220))
-                .gate("A" + new Random().nextInt(1000))
+                .arrivalAt(arrivalAt)
+                .durationMinutes(120)
+                .seatsTotal(180)
+                .terminal("T1")
+                .gate("A1")
                 .status(FlightStatus.CREATED)
-                .createdAt(LocalDateTime.now())
-                .updatedAt(null)
                 .build();
     }
 
+    public static Flight getFlightPersisted(
+            Airline airline,
+            Aircraft aircraft,
+            Airport departure,
+            Airport arrival,
+            String flightNumber,
+            LocalDateTime departureAt
+    ) {
+        LocalDateTime arrivalAt = departureAt.plusHours(2);
+
+        return Flight.builder()
+                .id(UUID.randomUUID())
+                .flightNumber(flightNumber)
+                .airline(airline)
+                .aircraft(aircraft)
+                .departureAirport(departure)
+                .arrivalAirport(arrival)
+                .departureAt(departureAt)
+                .arrivalAt(arrivalAt)
+                .durationMinutes(120)
+                .seatsTotal(180)
+                .terminal("T1")
+                .gate("A1")
+                .status(FlightStatus.CREATED)
+                .build();
+    }
 }
