@@ -50,6 +50,8 @@ services:
       KAFKA_LOG_DIRS: /tmp/kraft-combined-logs
       # Уникальный идентификатор KRaft-кластера. Должен быть одинаковым после рестарта контейнера.
       CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
+    networks:
+      - shared-network
 
   kafdrop:
     image: obsidiandynamics/kafdrop:latest
