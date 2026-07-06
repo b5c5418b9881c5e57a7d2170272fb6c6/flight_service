@@ -95,12 +95,11 @@ services:
       flightpostgresdb:
         condition: service_healthy
       kafka:
-        condition: service_started
+        condition: service_healthy
+      kafdrop:
+        condition: service_healthy
     environment:
       SPRING_PROFILES_ACTIVE: docker
-      SPRING_DATASOURCE_URL: jdbc:postgresql://flightpostgresdb:5432/flight_service_db
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: postgres
     networks:
       - shared-network
 
