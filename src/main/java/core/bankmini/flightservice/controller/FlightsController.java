@@ -64,8 +64,8 @@ public class FlightsController {
     }
 
     @GetMapping(value = "/number", name = "Get flight by number")
-    public ResponseEntity<FlightSearchDto> getFlightByNumber(@Valid @RequestParam String number) {
-        return ResponseEntity.ok().body(flightService.getFlightByNumber(number));
+    public ResponseEntity<FlightSearchDto> getFlightByNumber(@Valid @RequestParam String flightNumber) {
+        return ResponseEntity.ok().body(flightService.getFlightByNumber(flightNumber));
     }
 
 }
