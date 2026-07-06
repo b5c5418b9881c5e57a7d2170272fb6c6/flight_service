@@ -2,7 +2,6 @@ package core.bankmini.flightservice.utility;
 
 import core.bankmini.flightservice.model.dto.events.FlightCancelledEvent;
 import core.bankmini.flightservice.model.dto.events.FlightCreateEvent;
-import core.bankmini.flightservice.model.dto.events.FlightUpdateEvent;
 import core.bankmini.flightservice.model.entity.Flight;
 import org.springframework.stereotype.Component;
 
