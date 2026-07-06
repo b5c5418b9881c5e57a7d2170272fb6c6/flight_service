@@ -46,8 +46,8 @@ public class FlightService {
 
         Boolean existFlight = flightRepository.existsByFlightNumberIs(dtoRequest.flightNumber());
 
-        if (existFlight == false) {
-            throw new IllegalArgumentException("Flight with this number %s does not exist".formatted(dtoRequest.flightNumber()));
+        if (existFlight != false) {
+            throw new IllegalArgumentException("Flight with this number %s already exist".formatted(dtoRequest.flightNumber()));
         }
 
         Airline airline = airlineRepository.findById(dtoRequest.airlineId())
