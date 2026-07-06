@@ -3,6 +3,9 @@ package core.bankmini.flightservice.service;
 import core.bankmini.flightservice.exceptions.AircraftNotFoundException;
 import core.bankmini.flightservice.exceptions.AirlineNotFoundException;
 import core.bankmini.flightservice.exceptions.AirportNotFoundException;
+import core.bankmini.flightservice.model.dto.KafkaTopics;
+import core.bankmini.flightservice.model.dto.events.FlightCancelledEvent;
+import core.bankmini.flightservice.model.dto.events.FlightCreateEvent;
 import core.bankmini.flightservice.model.dto.flight.CreateFlightDtoRequest;
 import core.bankmini.flightservice.model.dto.flight.FlightSearchDto;
 import core.bankmini.flightservice.model.entity.Aircraft;
@@ -14,6 +17,7 @@ import core.bankmini.flightservice.repository.AircraftRepository;
 import core.bankmini.flightservice.repository.AirlineRepository;
 import core.bankmini.flightservice.repository.AirportRepository;
 import core.bankmini.flightservice.repository.FlightRepository;
+import core.bankmini.flightservice.utility.FlightEventConverter;
 import core.bankmini.flightservice.utility.FlightMapper;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -28,18 +32,21 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.Executor;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class FlightService {
 
+    // todo: add update flight logic
+
     private final FlightRepository flightRepository;
     private final AirlineRepository airlineRepository;
     private final AircraftRepository aircraftRepository;
     private final AirportRepository airportRepository;
     private final FlightMapper mapper;
+    private final FightEventProducer producer;
+    private final FlightEventConverter converter;
 
     @Transactional
     public UUID createFlight(CreateFlightDtoRequest dtoRequest) {
@@ -78,6 +85,16 @@ public class FlightService {
 
         log.info("FlightService: Successfully created flight: {}", savedFlight.getId());
 
+        FlightCreateEvent value = converter.convertCreateEvent(savedFlight);
+
+        producer.send(
+                KafkaTopics.FLIGHT_EVENTS,
+                savedFlight.getFlightNumber(),
+                value
+        );
+
+        log.info("FlightService: Successfully send from topic: {}", KafkaTopics.FLIGHT_EVENTS);
+
         return savedFlight.getId();
     }
 
@@ -115,6 +132,17 @@ public class FlightService {
                 .orElseThrow(() -> new IllegalArgumentException("Flight with id " + id + " not found"));
         fl.setStatus(FlightStatus.CANCELLED);
         log.info("FlightService: Cancelling flight: {}", fl.getId());
+
+        FlightCancelledEvent value = converter.convertCancelEvent(fl);
+
+        producer.send(
+                KafkaTopics.FLIGHT_EVENTS,
+                fl.getFlightNumber(),
+                value
+        );
+
+        log.info("FlightService: Successfully send from topic: {}", KafkaTopics.FLIGHT_EVENTS);
+
     }
 
     public List<FlightSearchDto> searchAllFlights(
