@@ -50,6 +50,8 @@ services:
       KAFKA_LOG_DIRS: /tmp/kraft-combined-logs
       # Уникальный идентификатор KRaft-кластера. Должен быть одинаковым после рестарта контейнера.
       CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
+    volumes:
+      - kafka_data:/var/lib/kafka/data
     networks:
       - shared-network
 
@@ -78,7 +80,7 @@ services:
       # Сохраняем данные БД между перезапусками контейнера
       - pg_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d flight_service_db"]
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d flight_service_db" ]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -95,9 +97,9 @@ services:
       flightpostgresdb:
         condition: service_healthy
       kafka:
-        condition: service_healthy
+        condition: service_started
       kafdrop:
-        condition: service_healthy
+        condition: service_started
     environment:
       SPRING_PROFILES_ACTIVE: docker
     networks:
@@ -109,3 +111,4 @@ networks:
 
 volumes:
   pg_data:
+  kafka_data:
