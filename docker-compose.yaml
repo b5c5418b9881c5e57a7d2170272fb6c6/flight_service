@@ -1,72 +1,5 @@
 services:
 
-  kafka:
-    image: apache/kafka:3.9.0
-    container_name: kafka
-    ports:
-      # Используется для внутренней связи между контроллерами Kafka в режиме KRaft (Kafka Raft Metadata Mode) Каждый контроллер подключается к другим через этот порт.
-      - "9092:9092" # INTERNAL listener (контейнеры Docker)
-      - "9093:9093" # EXTERNAL listener (локальный запуск из IDE)
-    environment:
-      # -------------------------
-      # KRaft configuration
-      # -------------------------
-      # Уникальный идентификатор брокера внутри кластера. Для одного брокера всегда 1.
-      KAFKA_NODE_ID: 1
-      # Брокер одновременно хранит сообщения и является контроллером метаданных кластера.
-      KAFKA_PROCESS_ROLES: broker,controller
-      # Адрес контроллера. Используется только для обмена метаданными между контроллерами.
-      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9094
-      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
-      # Имя listener'а, который используется контроллером.
-      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
-
-      # -------------------------
-      # Network
-      # -------------------------
-      # На каких адресах Kafka принимает подключения.
-      # INTERNAL: клиентские подключения
-      # CONTROLLER: внутренний канал контроллеров KRaft - 9094
-      KAFKA_LISTENERS: INTERNAL://:9092,EXTERNAL://:9093,CONTROLLER://:9094
-      # Адрес, который Kafka сообщает клиентам. Все контейнеры docker-compose будут подключаться именно по имени сервиса kafka:9092.
-      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:9092,EXTERNAL://localhost:9093
-      # Соответствие listener → протокол безопасности. Здесь используется обычный PLAINTEXT.
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT
-
-      # -------------------------
-      # Topics
-      # -------------------------
-      # Автоматически создавать топики при первом обращении. Для обучения удобно, для production обычно отключают.
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: true
-      # Количество партиций по умолчанию для автоматически созданных топиков.
-      KAFKA_NUM_PARTITIONS: 3
-      # Репликация внутренних топиков Kafka. При одном брокере значение может быть только 1.
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      # Репликация transaction state log.
-      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
-      # Минимальное число ISR-реплик. При одном брокере также должно быть 1.
-      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
-      # Каталог хранения логов Kafka.
-      KAFKA_LOG_DIRS: /tmp/kraft-combined-logs
-      # Уникальный идентификатор KRaft-кластера. Должен быть одинаковым после рестарта контейнера.
-      CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
-    volumes:
-      - kafka_data:/var/lib/kafka/data
-    networks:
-      - shared-network
-
-  kafdrop:
-    image: obsidiandynamics/kafdrop:latest
-    container_name: kafka-ui
-    depends_on:
-      - kafka
-    ports:
-      - "9000:9000"
-    environment:
-      KAFKA_BROKERCONNECT: kafka:9092
-    networks:
-      - shared-network
-
   flightpostgresdb:
     image: postgres:15
     container_name: flight_service_db_container
@@ -96,10 +29,6 @@ services:
     depends_on:
       flightpostgresdb:
         condition: service_healthy
-      kafka:
-        condition: service_started
-      kafdrop:
-        condition: service_started
     environment:
       SPRING_PROFILES_ACTIVE: docker
     networks:
