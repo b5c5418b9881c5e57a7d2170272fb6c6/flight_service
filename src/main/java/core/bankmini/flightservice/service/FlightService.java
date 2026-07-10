@@ -1,10 +1,8 @@
 package core.bankmini.flightservice.service;
 
-import core.bankmini.flightservice.exceptions.AircraftNotFoundException;
-import core.bankmini.flightservice.exceptions.AirlineNotFoundException;
-import core.bankmini.flightservice.exceptions.AirportNotFoundException;
+import core.bankmini.flightservice.exceptions.*;
 import core.bankmini.flightservice.model.dto.KafkaTopics;
-import core.bankmini.flightservice.model.dto.events.FlightCancelledEvent;
+import core.bankmini.flightservice.model.dto.events.FlightCanceledEvent;
 import core.bankmini.flightservice.model.dto.events.FlightCreateEvent;
 import core.bankmini.flightservice.model.dto.flight.CreateFlightDtoRequest;
 import core.bankmini.flightservice.model.dto.flight.FlightSearchDto;
@@ -127,21 +125,34 @@ public class FlightService {
 
     @Transactional
     public void cancelFlight(@NotNull UUID id) {
-        var fl = flightRepository
+        var flight = flightRepository
                 .findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Flight with id " + id + " not found"));
-        fl.setStatus(FlightStatus.CANCELLED);
-        log.info("FlightService: Cancelling flight: {}", fl.getId());
+                .orElseThrow(() -> new FlightNotFoundException("Flight with id " + id + " not found"));
 
-        FlightCancelledEvent value = converter.convertCancelEvent(fl);
+        var flightId = flight.getId();
+        var flightStatus = flight.getStatus();
+        var flightNumber = flight.getFlightNumber();
+
+        if (flightStatus == FlightStatus.CANCELLED) {
+            throw new FlightAlreadyCanceledException("Flight with id " + flightId + " is already cancelled");
+        }
+
+        flight.setStatus(FlightStatus.CANCELLED);
+        log.info("FlightService: Cancelling flight: {}", flightId);
+
+        FlightCanceledEvent value = converter.convertCancelEvent(flight);
 
         producer.send(
                 KafkaTopics.FLIGHT_EVENTS,
-                fl.getFlightNumber(),
+                flightNumber,
                 value
         );
 
-        log.info("FlightService: Successfully send from topic: {}", KafkaTopics.FLIGHT_EVENTS);
+        log.info(
+                "Flight {} cancellation event sent to topic {}",
+                flightId,
+                KafkaTopics.FLIGHT_EVENTS
+        );
 
     }
 
