@@ -7,7 +7,7 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Builder
-public record FlightCancelledEvent(
+public record FlightCanceledEvent(
         UUID eventId,
         Instant eventTimeStamp,
         UUID flightId,
