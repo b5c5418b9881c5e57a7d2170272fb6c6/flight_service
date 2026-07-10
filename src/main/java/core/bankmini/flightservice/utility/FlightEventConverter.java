@@ -1,6 +1,6 @@
 package core.bankmini.flightservice.utility;
 
-import core.bankmini.flightservice.model.dto.events.FlightCancelledEvent;
+import core.bankmini.flightservice.model.dto.events.FlightCanceledEvent;
 import core.bankmini.flightservice.model.dto.events.FlightCreateEvent;
 import core.bankmini.flightservice.model.entity.Flight;
 import org.springframework.stereotype.Component;
@@ -52,8 +52,8 @@ public class FlightEventConverter {
 //        );
 //    }
 
-    public FlightCancelledEvent convertCancelEvent(Flight flight){
-        return FlightCancelledEvent.builder()
+    public FlightCanceledEvent convertCancelEvent(Flight flight){
+        return FlightCanceledEvent.builder()
                 .eventId(UUID.randomUUID())
                 .eventTimeStamp(Instant.now())
                 .flightId(flight.getId())
