@@ -1,7 +1,6 @@
 package core.bankmini.flightservice.utility;
 
-import core.bankmini.flightservice.exceptions.AirportAlreadyExistsException;
-import core.bankmini.flightservice.exceptions.FlightAlreadyExistException;
+import core.bankmini.flightservice.exceptions.*;
 import core.bankmini.flightservice.model.dto.ValidationErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -47,6 +46,12 @@ public class GlobalExceptionHandler {
         return buildProblem(HttpStatus.BAD_REQUEST, "Bad request", ex.getMessage(), request);
     }
 
+    // 400 (Flight уже отменен)
+    @ExceptionHandler(FlightAlreadyCanceledException.class)
+    public ProblemDetail handleFlightAlreadyCanceled(FlightAlreadyCanceledException ex, HttpServletRequest request) {
+        return buildProblem(HttpStatus.BAD_REQUEST, "Flight already canceled", ex.getMessage(), request);
+    }
+
     // 400 (валидация параметров)
     @ExceptionHandler(ConstraintViolationException.class)
     public ProblemDetail handleConstraint(ConstraintViolationException ex, HttpServletRequest request) {
@@ -84,6 +89,12 @@ public class GlobalExceptionHandler {
         );
     }
 
+    // 404 (Flight не найден)
+    @ExceptionHandler(FlightNotFoundException.class)
+    public ProblemDetail handleNoHandler(FlightNotFoundException ex, HttpServletRequest request) {
+        return buildProblem(HttpStatus.NOT_FOUND, "Flight not found", ex.getMessage(), request);
+    }
+
     // 404 (не найден endpoint)
     @ExceptionHandler(NoHandlerFoundException.class)
     public ProblemDetail handleNoHandler(NoHandlerFoundException ex, HttpServletRequest request) {
@@ -119,6 +130,13 @@ public class GlobalExceptionHandler {
     public ProblemDetail handleServerConflict(DataIntegrityViolationException ex, HttpServletRequest request) {
         return buildProblem(HttpStatus.CONFLICT, "Database conflict", ex.getMostSpecificCause().getMessage(), request);
     }
+
+    // 500 Internal Server Error
+    @ExceptionHandler(InternalServerErrorException.class)
+    public ProblemDetail handleInternalServerErrorException(InternalServerErrorException ex, HttpServletRequest request) {
+        return buildProblem(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error", ex.getMessage(), request);
+    }
+
 
     //  fallback
     @ExceptionHandler({
