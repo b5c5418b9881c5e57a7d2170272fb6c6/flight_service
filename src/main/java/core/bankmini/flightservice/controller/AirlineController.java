@@ -33,7 +33,7 @@ public class AirlineController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AirlineResponseDto> getAllAirlines(@PathVariable UUID id) {
+    public ResponseEntity<AirlineResponseDto> getByIdAirline(@PathVariable UUID id) {
         return ResponseEntity.ok().body(airlineService.getAirlineById(id));
     }
 
