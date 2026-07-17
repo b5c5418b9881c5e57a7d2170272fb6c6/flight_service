@@ -14,12 +14,12 @@ public class SwaggerCustomConfig {
     public OpenAPI customOpenAPI() {
 
         Info info = new Info()
-                .title("Ticket Service API")
+                .title("Flight Service API")
                 .version("v1.0.0")
-                .description("REST API for ticket processing system")
+                .description("REST API for flight processing system")
                 .contact(new Contact()
-                        .name("ProjectEx Team")
-                        .email("test@mail.ru"))
+                        .name("Aboba Team")
+                        .email("aboba@aboba.cru"))
                 .license(new License()
                         .name("Apache 2.0"));
 
