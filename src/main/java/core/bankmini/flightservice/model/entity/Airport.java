@@ -60,6 +60,9 @@ public class Airport {
     @Column(precision = 10, scale = 7)
     private BigDecimal longitude;
 
+    //todo: добавить Minimum Connecting Time (MCT) — достаточно ли времени на пересадку (например, >= 45 =< 90 мин).
+    //todo: добавить Maximum Layover — отсев слишком долгих ожиданий (например, =< 24 часов).
+
     //Мин. время пересадки
     @Column(nullable = false)
     private Integer minLayoverMinutes;

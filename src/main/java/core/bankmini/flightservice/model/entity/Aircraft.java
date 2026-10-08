@@ -25,6 +25,9 @@ public class Aircraft {
     //Производитель
     private String manufactured;
 
+    //фича по бронированию билета - работа с Booking Service
+    //todo: Выделить отдельную сущность под места посадки т.к. при бронировании билета будет браться место на бронь и покупку в тикет
+
     private Integer seatsEconomy;
 
     private Integer seatsBusiness;

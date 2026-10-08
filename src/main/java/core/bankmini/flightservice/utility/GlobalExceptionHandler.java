@@ -107,6 +107,18 @@ public class GlobalExceptionHandler {
         return buildProblem(HttpStatus.NOT_FOUND, "Not found", ex.getMessage(), request);
     }
 
+    // 404 (Airline не найден)
+    @ExceptionHandler(AirlineNotFoundException.class)
+    public ProblemDetail handleAirlineNotFound(AirlineNotFoundException ex, HttpServletRequest request) {
+        return buildProblem(HttpStatus.NOT_FOUND, "Airline not found", ex.getMessage(), request);
+    }
+
+    // 404 (Airport не найден)
+    @ExceptionHandler(AirportNotFoundException.class)
+    public ProblemDetail handleAirportNotFound(AirportNotFoundException ex, HttpServletRequest request) {
+        return buildProblem(HttpStatus.NOT_FOUND, "Airline not found", ex.getMessage(), request);
+    }
+
     // 405 (не тот HTTP метод)
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ProblemDetail handleMethod(HttpRequestMethodNotSupportedException ex, HttpServletRequest request) {
