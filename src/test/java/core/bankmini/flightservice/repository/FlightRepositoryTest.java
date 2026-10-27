@@ -1,6 +1,6 @@
 package core.bankmini.flightservice.repository;
 
-import core.bankmini.flightservice.config.IntegrationTest;
+import core.bankmini.flightservice.config.TestcontainersConfiguration;
 import core.bankmini.flightservice.model.entity.Aircraft;
 import core.bankmini.flightservice.model.entity.Airline;
 import core.bankmini.flightservice.model.entity.Airport;
@@ -10,12 +10,13 @@ import core.bankmini.flightservice.util.AircraftDataUtil;
 import core.bankmini.flightservice.util.AirlineDataUtil;
 import core.bankmini.flightservice.util.AirportDataUtil;
 import core.bankmini.flightservice.util.FlightDataUtil;
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.testcontainers.junit.jupiter.Testcontainers;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -23,22 +24,25 @@ import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-@SpringBootTest
-@Testcontainers
+@DataJpaTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class FlightRepositoryTest extends IntegrationTest {
+@Import(TestcontainersConfiguration.class)
+class FlightRepositoryTest {
 
     @Autowired
-    FlightRepository flightRepository;
+    private FlightRepository flightRepository;
 
     @Autowired
-    AirportRepository airportRepository;
+    private AirportRepository airportRepository;
 
     @Autowired
-    AircraftRepository aircraftRepository;
+    private AircraftRepository aircraftRepository;
 
     @Autowired
-    AirlineRepository airlineRepository;
+    private AirlineRepository airlineRepository;
+
+    @Autowired
+    private EntityManager entityManager;
 
     private Airline airline;
     private Aircraft aircraft;
@@ -189,7 +193,7 @@ class FlightRepositoryTest extends IntegrationTest {
     }
 
     @Test
-    void cancelExpiredFlights() {
+    void cancelExpiredFlightsArrivalAtNow() {
         //given
         Aircraft aircraft1 = AircraftDataUtil.getAircraftObject();
         Airline airline1 = AirlineDataUtil.getAirlineObject("1", "4");
@@ -206,10 +210,11 @@ class FlightRepositoryTest extends IntegrationTest {
         //when
         flightRepository.save(flight);
 
-        int updated = flightRepository.cancelExpiredFlights(LocalDateTime.now());
+        int getCanceledFlight = flightRepository.cancelExpiredFlights(LocalDateTime.now());
 
         //then
-        assertThat(updated).isGreaterThan(0);
+        assertThat(getCanceledFlight).isGreaterThan(0);
+        entityManager.clear();
         assertThat(flightRepository.findByFlightNumber("cancelTest").getStatus()).isEqualTo(FlightStatus.CANCELLED);
     }
 
