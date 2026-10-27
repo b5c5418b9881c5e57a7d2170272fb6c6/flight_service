@@ -11,6 +11,8 @@ import core.bankmini.flightservice.util.AirlineDataUtil;
 import core.bankmini.flightservice.util.AirportDataUtil;
 import core.bankmini.flightservice.util.FlightDataUtil;
 import jakarta.persistence.EntityManager;
+import lombok.extern.log4j.Log4j2;
+import lombok.val;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -24,6 +26,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
+@Log4j2
 @DataJpaTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Import(TestcontainersConfiguration.class)
@@ -147,14 +150,13 @@ class FlightRepositoryTest {
                 airline, aircraft, departure, arrival, "KC123"
         );
 
-        flightRepository.save(flight);
+        val savedFlight = flightRepository.save(flight);
+        val createdFlightId = flightRepository.findById(savedFlight.getId());
 
-        System.out.println("saved flight: " + flight);
-
+        log.info("saved flight: {}", savedFlight);
         assertThat(flightRepository.count()).isEqualTo(4);
-        assertThat(flight.getId()).isEqualTo(flightRepository.findById(flight.getId()).get().getId());
-        List<Flight> flights = flightRepository.findAll();
-        flights.forEach(System.out::println);
+
+        assertThat(createdFlightId.get().getId()).isEqualTo(flight.getId());
     }
 
     @Test
