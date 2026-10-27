@@ -114,8 +114,8 @@ public interface FlightRepository extends JpaRepository<Flight, UUID> {
                 update Flight f
                 set f.status = 'CANCELLED'
                 where f.status = 'CREATED'
-                  and f.departureAt < :now
-            """)
+                  and f.arrivalAt <= :now
+            """)//Время прилета - функция для шедуллера
     int cancelExpiredFlights(@Param("now") LocalDateTime now);
 
     Boolean existsByFlightNumberIs(String flightNumber);
