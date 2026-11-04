@@ -9,4 +9,19 @@ public interface AirlineRepository extends JpaRepository<Airline, UUID> {
     Airline findByIataCode(String iataCode);
 
     Airline findByIcaoCode(String icaoCode);
+
+    @Query("""
+                select a
+                from Airline a
+                where (:iataCode is null or a.iataCode = :iataCode)
+                  and (:icaoCode is null or a.icaoCode = :icaoCode)
+                  and (:name is null or a.name = :name)
+            """)
+    Airline searchAirlinesByQueries(
+            @Param("iataCode") String iataCode,
+            @Param("icaoCode") String icaoCode,
+            @Param("name") String name
+    );
+
+    boolean existsByIataCodeAndIcaoCode(String iataCode, String icaoCode);
 }
