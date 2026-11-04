@@ -1,5 +1,5 @@
 # Сборка
-FROM gradle:9.4.1-jdk17 AS build
+FROM gradle:9.4.1-jdk21 AS build
 
 WORKDIR /app
 
@@ -8,7 +8,7 @@ COPY . .
 RUN gradle build -x test
 
 # Финальный образ
-FROM eclipse-temurin:17-jdk
+FROM eclipse-temurin:21-jdk
 
 WORKDIR /app
 COPY --from=build /app/build/libs/*.jar app.jar
