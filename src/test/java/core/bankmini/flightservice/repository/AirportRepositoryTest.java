@@ -68,4 +68,29 @@ class AirportRepositoryTest {
         assertThat(airport).isNotNull();
         assertThat(airport.getIcaoCode()).isEqualTo(airport1.getIcaoCode());
     }
+
+    @Test
+    void searchCountryAndCityByAirport() {
+        // given
+
+        //when
+        List<Airport> searchByQueries = airportRepository.searchAirportsByQueries(
+                "Kazakhstan", "Almaty", null);
+        //then
+        assertThat(searchByQueries.size()).isNotZero();
+        assertThat(searchByQueries.size()).isEqualTo(1);
+    }
+
+    @Test
+    void searchCountryAndCityAndIatacodeByAirport() {
+        // given
+
+        //when
+        List<Airport> searchByQueries = airportRepository.searchAirportsByQueries(
+                "Kazakhstan", "Almaty", "ALA");
+        //then
+        assertThat(searchByQueries.size()).isNotZero();
+        assertThat(searchByQueries.size()).isEqualTo(1);
+    }
+
 }
