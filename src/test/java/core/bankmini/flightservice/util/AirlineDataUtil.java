@@ -6,7 +6,10 @@ import java.util.UUID;
 
 public class AirlineDataUtil {
 
-    public static Airline getAirlineObject(String iataCode, String icaoCode) {
+    public static Airline createAirline(
+            String iataCode,
+            String icaoCode
+    ) {
         return Airline.builder()
                 .id(UUID.randomUUID())
                 .name("Airline name " + iataCode)
