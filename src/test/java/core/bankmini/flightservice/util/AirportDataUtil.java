@@ -62,27 +62,6 @@ public class AirportDataUtil {
                 .build();
     }
 
-    public static Airport getAirportPersistedWithQueryCountryCityIataCodeSecond(
-            UUID id,
-            String country,
-            String city,
-            String iataCode
-    ) {
-        return Airport.builder()
-                .id(id)
-                .iataCode(iataCode)
-                .icaoCode("SCND")
-                .name("Test Airport second")
-                .city(city)
-                .country(country)
-                .timezone("Test/Timezone")
-                .latitude(BigDecimal.ONE)
-                .longitude(BigDecimal.ONE)
-                .minLayoverMinutes(0)
-                .internationalAirport(true)
-                .build();
-    }
-
     public static Airport getAirportObject(
             String iataCode, String icaoCode,
             String city, String country
@@ -110,6 +89,27 @@ public class AirportDataUtil {
                 .timezone("Test/Timezone")
                 .minLayoverMinutes(0)
                 .internationalAirport(true)
+                .build();
+    }
+
+    public static Airport createAirport(
+            String name,
+            String country,
+            String city,
+            String iataCode,
+            String icaoCode,
+            String timezone
+    ) {
+        return Airport.builder()
+                .id(UUID.randomUUID())
+                .iataCode(iataCode)
+                .icaoCode(icaoCode)
+                .name("Airport name " + name + " " + icaoCode)
+                .city(city)
+                .country(country)
+                .timezone(timezone)
+                .minLayoverMinutes(new Random().nextInt(100))
+                .internationalAirport(new Random().nextBoolean())
                 .build();
     }
 }
