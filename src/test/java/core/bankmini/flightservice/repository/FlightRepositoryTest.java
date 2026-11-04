@@ -109,9 +109,9 @@ class FlightRepositoryTest {
         Aircraft aircraft2 = AircraftDataUtil.getAircraftObject();
         Aircraft aircraft3 = AircraftDataUtil.getAircraftObject();
 
-        Airline airline1 = AirlineDataUtil.getAirlineObject("ATA", "AB");
-        Airline airline2 = AirlineDataUtil.getAirlineObject("X", "YX");
-        Airline airline3 = AirlineDataUtil.getAirlineObject("ABO", "BA");
+        Airline airline1 = AirlineDataUtil.createAirline("ATA", "AB");
+        Airline airline2 = AirlineDataUtil.createAirline("X", "YX");
+        Airline airline3 = AirlineDataUtil.createAirline("ABO", "BA");
 
         Airport departure1 = AirportDataUtil.getAirportObject("ATA", "AB", "Almaty", "Kaz");
         Airport departure2 = AirportDataUtil.getAirportObject("X", "YX", "IKS", "SOME");
@@ -160,30 +160,6 @@ class FlightRepositoryTest {
     }
 
     @Test
-    void searchAllFlightsWithDeparture() {
-        //given
-
-        //when
-
-        //then
-    }
-
-    @Test
-    void searchAllFlightsWithArrival() {
-
-    }
-
-    @Test
-    void searchAllFlightsWithoutDate() {
-
-    }
-
-    @Test
-    void searchAllFlightsWithDate() {
-
-    }
-
-    @Test
     void findByFlightNumber() {
         //given
 
@@ -198,7 +174,7 @@ class FlightRepositoryTest {
     void cancelExpiredFlightsArrivalAtNow() {
         //given
         Aircraft aircraft1 = AircraftDataUtil.getAircraftObject();
-        Airline airline1 = AirlineDataUtil.getAirlineObject("1", "4");
+        Airline airline1 = AirlineDataUtil.createAirline("1", "4");
         Airport departure1 = AirportDataUtil.getAirportObject("2", "5", "NULL", "Kaz");
         Airport arrivals1 = AirportDataUtil.getAirportObject("3", "6", "qwer", "Kaz");
 
@@ -224,7 +200,7 @@ class FlightRepositoryTest {
     void existsByFlightNumberIsPositiveTest() {
         //given
         Aircraft aircraft1 = AircraftDataUtil.getAircraftObject();
-        Airline airline1 = AirlineDataUtil.getAirlineObject("11", "44");
+        Airline airline1 = AirlineDataUtil.createAirline("11", "44");
         Airport departure1 = AirportDataUtil.getAirportObject("22", "55", "NULL", "Kaz");
         Airport arrivals1 = AirportDataUtil.getAirportObject("33", "66", "qwer", "Kaz");
 
