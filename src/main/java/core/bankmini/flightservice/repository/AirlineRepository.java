@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface AirlineRepository extends JpaRepository<Airline, UUID> {
@@ -19,7 +20,7 @@ public interface AirlineRepository extends JpaRepository<Airline, UUID> {
                   and (:icaoCode is null or a.icaoCode = :icaoCode)
                   and (:name is null or a.name = :name)
             """)
-    Airline searchAirlinesByQueries(
+    List<Airline> searchAirlinesByQueries(
             @Param("iataCode") String iataCode,
             @Param("icaoCode") String icaoCode,
             @Param("name") String name
