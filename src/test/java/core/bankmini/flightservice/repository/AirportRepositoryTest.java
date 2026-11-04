@@ -4,18 +4,24 @@ import core.bankmini.flightservice.config.TestcontainersConfiguration;
 import core.bankmini.flightservice.model.entity.Airport;
 import core.bankmini.flightservice.util.AirportDataUtil;
 
+import jakarta.persistence.EntityManager;
+import lombok.extern.log4j.Log4j2;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import java.util.UUID;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
+@Log4j2
 @DataJpaTest
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Import(TestcontainersConfiguration.class)
 class AirportRepositoryTest {
 
@@ -73,44 +79,53 @@ class AirportRepositoryTest {
         UUID id = UUID.randomUUID();
         Airport airport = AirportDataUtil.getAirportPersisted(id);
         //when
-        Airport savedAirport = repository.save(airport);
+        Airport savedAirport = airportRepository.save(airport);
         //then
         assertThat(savedAirport).isNotNull();
         assertThat(savedAirport.getId()).isEqualTo(airport.getId());
     }
 
-
     @Test
-    void searchAirportsByQueries() {
-        // given
-        Airport airport1 = AirportDataUtil.getAirportPersistedWithQueryCountryCityIataCodeFist(
-                UUID.randomUUID(), "Country1", "City1", "ONE");
-        Airport airport2 = AirportDataUtil.getAirportTransient();
-        Airport airport3 = AirportDataUtil.getAirportPersistedWithQueryCountryCityIataCodeSecond(
-                UUID.randomUUID(), "Country1", "City1", "A2R");
-        // when
-        List<Airport> airportsSaved = repository.saveAll(List.of(airport1, airport2, airport3));
-        List<Airport> searchByQueries = repository.searchAirportsByQueries(
-                "Country1", "City1", null
-        );
+    void findNullByName() {
+        //given
+        Airport airport1 = AirportDataUtil.createAirport("Airport name 3", "Country3", "City3", "THR", "3", "Timezone/THR");
+        //when
+        airportRepository.save(airport1);
+        Airport airport = airportRepository.findByName("Test Airport first");
         //then
-        System.out.println("Search by queries: " + searchByQueries);
-        assertThat(airportsSaved.size()).isNotEqualTo(searchByQueries.isEmpty());
-        assertThat(searchByQueries.size()).isEqualTo(2);
+        assertThat(airport).isNull();
     }
 
     @Test
-    void findByName() {
+    void givenAllParamsNull_thenGetAllAirports() {
         //given
-        Airport airport1 = AirportDataUtil.getAirportPersistedWithQueryCountryCityIataCodeFist(
-                UUID.randomUUID(), "Country1", "City1", "ONE");
+
         //when
-        repository.save(airport1);
-        Airport airport = repository.findByName("Test Airport first");
-        System.out.println("Airport: " + airport);
+        airportRepository.saveAll(List.of(almaty, astana, frankfurt));
+        log.info("Create all airports: {}, {}, {}", almaty.getId(), astana.getId(), frankfurt.getId());
+        List<Airport> result = airportRepository.searchAirportsByQueries(null, null, null);
+
         //then
-        assertThat(airport).isNotNull();
-        assertThat(airport.getIcaoCode()).isEqualTo(airport1.getIcaoCode());
+        assertThat(result)
+                .hasSize(3)
+                .extracting(Airport::getIataCode)
+                .containsExactlyInAnyOrder("ALA", "NQZ", "FRA");
+    }
+
+    @Test
+    void shouldFilteredAirportsByCountry(){
+        //given
+
+        //when
+        airportRepository.saveAll(List.of(almaty, astana, frankfurt));
+        List<Airport> result = airportRepository.searchAirportsByQueries(
+                "Kazakhstan", null, null);
+
+        //then
+        assertThat(result)
+                .hasSize(2)
+                .extracting(Airport::getIataCode)
+                .containsExactlyInAnyOrder("ALA", "NQZ");
     }
 
     @Test
