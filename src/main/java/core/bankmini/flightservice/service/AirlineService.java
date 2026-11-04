@@ -26,25 +26,13 @@ public class AirlineService {
     @Transactional
     public UUID createAirline(AirlineRequestDto dto) {
 
-        try {
-            String iataCode = airlineRepository.findByIataCode(dto.iataCode()).getIataCode();
-            String icaoCode = airlineRepository.findByIcaoCode(dto.icaoCode()).getIcaoCode();
-
-            if (!dto.iataCode().equals(iataCode)) {
-                throw new CodeAlreadyExistException(iataCode, iataCode.getClass().getName());
-            }
-            if (!dto.icaoCode().equals(icaoCode)) {
-                throw new CodeAlreadyExistException(icaoCode, icaoCode.getClass().getName());
-            }
-        } catch (NullPointerException npe) {
-            throw new NullPointerException(npe.getMessage());
+        if (airlineRepository.existsByIataCodeAndIcaoCode(
+                dto.iataCode(), dto.icaoCode())) {
+            throw new CodeAlreadyExistException(dto.iataCode());
         }
 
         UUID id = UUID.randomUUID();
-
-        Airline airline = airlineRepository.save(
-                airlineMapper.mapAirlineRequestDtoToEntity(dto, id)
-        );
+        Airline airline = airlineRepository.save(airlineMapper.mapAirlineRequestDtoToEntity(dto, id));
 
         log.info("AirlineService: Airline with id {} created", airline.getId());
 
