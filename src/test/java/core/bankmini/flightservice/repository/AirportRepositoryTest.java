@@ -20,7 +20,51 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 class AirportRepositoryTest {
 
     @Autowired
-    public AirportRepository repository;
+    private AirportRepository airportRepository;
+
+    @Autowired
+    private EntityManager entityManager;
+
+    private Airport almaty;
+    private Airport astana;
+    private Airport frankfurt;
+
+    @BeforeEach
+    void setUp() {
+        almaty = AirportDataUtil.createAirport(
+                "Almaty International Airport",
+                "Kazakhstan",
+                "Almaty",
+                "ALA",
+                "AL",
+                "Test/AL"
+        );
+
+        astana = AirportDataUtil.createAirport(
+                "Nursultan Nazarbayev International Airport",
+                "Kazakhstan",
+                "Astana",
+                "NQZ",
+                "NQ",
+                "Test/NQ"
+        );
+
+        frankfurt = AirportDataUtil.createAirport(
+                "Frankfurt Airport",
+                "Germany",
+                "Frankfurt",
+                "FRA",
+                "FR",
+                "Test/FRA"
+        );
+
+        entityManager.persist(almaty);
+        entityManager.persist(astana);
+        entityManager.persist(frankfurt);
+
+        entityManager.flush();
+        entityManager.clear();
+    }
 
     @Test
     @DisplayName("Test save airport functionality")
